@@ -1,0 +1,25 @@
+name: Build and push Docker image
+
+on: push
+
+jobs:
+    build-image:
+        name: Build and push
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out the repo
+              uses: actions/checkout@v2
+            - name: Docker Login - DockerHub
+              run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
+            - name: Docker Login - Github Container Registry
+              run: docker login -u ${{ github.repository_owner }} -p ${{ secrets.GH_CR_PAT }} ghcr.io
+            - name: Docker Build
+              run: docker build -t notion-auto-backup .
+            - name: Tags
+              run: |
+                  docker tag notion-auto-backup ${{ secrets.DOCKERHUB_USERNAME }}/notion-auto-backup:latest
+                  docker tag notion-auto-backup ghcr.io/samuel-martineau/notion-auto-backup:latest
+            - name: Push
+              run: |
+                  docker push ${{ secrets.DOCKERHUB_USERNAME }}/notion-auto-backup:latest
+                  docker push ghcr.io/samuel-martineau/notion-auto-backup:latest

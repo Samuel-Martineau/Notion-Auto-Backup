@@ -1,0 +1,37 @@
+version: "3"
+
+services:
+    tasker:
+        image: strm/tasker
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        environment:
+            configuration: |
+                schedule:
+                    - every: 5 minutes
+                      task: notion-auto-backup
+                tasks:
+                    docker:
+                        - name: smartineau/notion-auto-backup
+                          image: notion-auto-backup
+                          volumes:
+                            - notion-auto-backup:/notion-backup
+                          environment:
+                            - SAVE_DIR=/notion-backup
+                            - NOTION_TOKEN=
+                            - NOTION_SPACE_ID=
+                          script:
+                            - python main.py
+                logging:
+                    level:
+                        ROOT: WARN
+                        org.springframework.web: WARN
+    file-server:
+        image: halverneus/static-file-server:latest
+        volumes:
+            - notion-auto-backup:/web
+        ports:
+            - 8080:8080
+
+volumes:
+    notion-auto-backup:
