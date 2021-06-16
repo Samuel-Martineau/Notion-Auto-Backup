@@ -35,6 +35,8 @@ def export(export_type: str):
     archive_path = path.join(save_path, 'archive', str(today.year),
                              today.strftime('%B').lower())
 
+    print(save_path, today_path, yesterday_path, archive_path)
+
     if path.exists(today_path):
         if path.exists(yesterday_path):
             shutil.rmtree(yesterday_path)

@@ -5,23 +5,25 @@ services:
         image: strm/tasker
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
+        logging:
+            driver: none
         environment:
             configuration: |
                 schedule:
-                    - every: 5 minutes
+                    - every: day
                       task: notion-auto-backup
                 tasks:
                     docker:
-                        - name: smartineau/notion-auto-backup
-                          image: notion-auto-backup
+                        - name: notion-auto-backup
+                          image: smartineau/notion-auto-backup
                           volumes:
-                            - notion-auto-backup:/notion-backup
+                              - notion-auto-backup_notion-auto-backup:/notion-backup
                           environment:
-                            - SAVE_DIR=/notion-backup
-                            - NOTION_TOKEN=
-                            - NOTION_SPACE_ID=
+                              - SAVE_DIR=/notion-backup
+                              - NOTION_TOKEN=${NOTION_TOKEN}
+                              - NOTION_SPACE_ID=${NOTION_SPACE_ID}
                           script:
-                            - python main.py
+                              - python main.py
                 logging:
                     level:
                         ROOT: WARN
