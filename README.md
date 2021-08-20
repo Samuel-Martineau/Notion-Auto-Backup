@@ -22,9 +22,16 @@ This is the generated directory strucutre:
 
 ## How to use?
 
+### Docker-Compose
+
 1. Copy the [example `docker-compose.yml`](https://github.com/Samuel-Martineau/Notion-Auto-Backup/blob/main/docker-compose.yml)
 2. Create a `.env` file with the following content:
     ```properties
     NOTION_TOKEN=%Insert the token_v2 cookie from notion.so%
     NOTION_SPACE_ID=%Insert the id of the workspace you want to backup%
     ```
+
+### Docker Swarm
+
+1. Copy the [example `swarm.docker-compose.yml`](https://github.com/Samuel-Martineau/Notion-Auto-Backup/blob/main/swarm.docker-compose.yml)
+2. Create a file named `notion_token` for your token_v2 cookie from notion.so and a file named `notion_space_id` for the id of the workspace you want to backup

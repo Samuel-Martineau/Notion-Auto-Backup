@@ -6,7 +6,6 @@ from os import path
 import zipfile
 from datetime import datetime
 import shutil
-import sys
 from multiprocessing.dummy import Pool as ThreadPool
 
 
@@ -16,10 +15,10 @@ def export(export_type: str):
 
     print(f"{export_type} {task_id}")
 
-    while (task := get_export_task_status(task_id))['type'] != 'complete':
+    while (task := get_export_task_status(task_id))["type"] != "complete":
         sleep(1)
 
-    export_url = task['exportURL'] or ''
+    export_url = task["exportURL"] or ""
 
     print(f"{export_type} {export_url}")
 
@@ -30,10 +29,11 @@ def export(export_type: str):
     today = datetime.today()
 
     save_path = path.join(SAVE_DIR, export_type)
-    today_path = path.join(save_path, 'today')
-    yesterday_path = path.join(save_path, 'yesterday')
-    archive_path = path.join(save_path, 'archive', str(today.year),
-                             today.strftime('%B').lower())
+    today_path = path.join(save_path, "today")
+    yesterday_path = path.join(save_path, "yesterday")
+    archive_path = path.join(
+        save_path, "archive", str(today.year), today.strftime("%B").lower()
+    )
 
     print(save_path, today_path, yesterday_path, archive_path)
 
@@ -55,5 +55,5 @@ def main():
         pool.map(export, EXPORT_TYPES)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

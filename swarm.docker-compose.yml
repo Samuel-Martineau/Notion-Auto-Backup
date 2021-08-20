@@ -1,0 +1,53 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json
+version: "3.8"
+
+services:
+    swarm-cronjob:
+        image: crazymax/swarm-cronjob
+        volumes:
+            - "/var/run/docker.sock:/var/run/docker.sock"
+        environment:
+            - "TZ=America/Toronto"
+            - "LOG_LEVEL=info"
+            - "LOG_JSON=false"
+        deploy:
+            placement:
+                constraints:
+                    - node.role == manager
+    notion-auto-backup:
+        image: smartineau/notion-auto-backup
+        command: python main.py
+        secrets:
+            - notion_token
+            - notion_space_id
+        volumes:
+            - nfs:/notion-backup
+        environment:
+            - SAVE_DIR=/notion-backup
+        deploy:            replicas: 0
+            labels:
+                - "swarm.cronjob.enable=true"
+                - "swarm.cronjob.schedule=0 0 * * *"
+                - "swarm.cronjob.skip-running=false"
+            restart_policy:
+                condition: none
+    file-server:
+        image: halverneus/static-file-server:latest
+        volumes:
+            - nfs:/web
+        ports:
+            - 8080:8080
+
+secrets:
+    notion_token:
+        file: ./notion_token
+    notion_space_id:
+        file: ./notion_space_id
+
+volumes:
+  nfs:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=NFS_SERVER_IP,nolock,soft,rw
+      device: :/SERVER_PATH
